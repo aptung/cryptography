@@ -7,7 +7,10 @@
 def encrypt_caesar(plaintext, offset):
     encrypted_text = ""
     for char in plaintext:
-        encrypted_text = encrypted_text + shift_character(char, offset)
+        if (65<=ord(char)<=90):
+            encrypted_text = encrypted_text + shift_character(char, offset)
+        else:
+            encrypted_text = encrypted_text + char
     return encrypted_text
 
 def shift_character(char, offset):
@@ -23,12 +26,25 @@ def decrypt_caesar(ciphertext, offset):
 # Arguments: string, string
 # Returns: string
 def encrypt_vigenere(plaintext, keyword):
-    pass
+    encrypted_string = ""
+    pos = 0
+    shift = ord(keyword[pos]) - 65
+    for char in plaintext:
+        encrypted_string = encrypted_string + shift_character(char, shift)
+        pos = (pos + 1) % len(keyword)
+        shift = ord(keyword[pos]) - 65
+    return encrypted_string
 
 # Arguments: string, string
 # Returns: string
 def decrypt_vigenere(ciphertext, keyword):
-    pass
+    decrypt_keyword = ""
+    for char in keyword:
+        if ord(char)==65:
+            decrypt_keyword = decrypt_keyword + char
+        else:
+            decrypt_keyword = decrypt_keyword + chr(156 - ord(char))
+    return decrypt_keyword
 
 # Merkle-Hellman Knapsack Cryptosystem
 # Arguments: integer
@@ -46,14 +62,14 @@ def create_public_key(private_key):
 def encrypt_mhkc(plaintext, public_key):
     pass
 
-# Arguments: list of integers, tuple B - a length-n tuple of integers
+# Arguments: list of integers, private key (W, Q, R) with W a tuple
 # Returns: bytearray or str of plaintext
 def decrypt_mhkc(ciphertext, private_key):
     pass
 
 def main():
     # Testing code here
-    print(decrypt_caesar(encrypt_caesar("TESTTESTABCDEF", 3565), 3565))
+    print(decrypt_vigenere('BLAHBLAHBLDFSD', 'AAAAA'))
 
 if __name__ == "__main__":
     main()
