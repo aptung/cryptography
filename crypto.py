@@ -1,3 +1,6 @@
+ASCIIA = 65
+ASCIIZ = 90
+
 # Caesar Cipher
 # Arguments: string, integer
 # Returns: string
@@ -7,14 +10,14 @@
 def encrypt_caesar(plaintext, offset):
     encrypted_text = ""
     for char in plaintext:
-        if (65<=ord(char)<=90):
+        if (ASCIIA<=ord(char)<=ASSCIIZ):
             encrypted_text = encrypted_text + shift_character(char, offset)
         else:
             encrypted_text = encrypted_text + char
     return encrypted_text
 
 def shift_character(char, offset):
-    return chr((ord(char)+offset-65)%26 + 65)
+    return chr((ord(char)+offset-ASCIIA)%26 + ASCIIA)
 
 # Arguments: string, integer
 # Returns: string
@@ -28,11 +31,11 @@ def decrypt_caesar(ciphertext, offset):
 def encrypt_vigenere(plaintext, keyword):
     encrypted_string = ""
     pos = 0
-    shift = ord(keyword[pos]) - 65
+    shift = ord(keyword[pos]) - ASCIIA
     for char in plaintext:
         encrypted_string = encrypted_string + shift_character(char, shift)
         pos = (pos + 1) % len(keyword)
-        shift = ord(keyword[pos]) - 65
+        shift = ord(keyword[pos]) - ASCIIA
     return encrypted_string
 
 # Arguments: string, string
@@ -40,11 +43,11 @@ def encrypt_vigenere(plaintext, keyword):
 def decrypt_vigenere(ciphertext, keyword):
     decrypt_keyword = ""
     for char in keyword:
-        if ord(char)==65:
+        if ord(char)==ASCIIA:
             decrypt_keyword = decrypt_keyword + char
         else:
-            decrypt_keyword = decrypt_keyword + chr(156 - ord(char))
-    return decrypt_keyword
+            decrypt_keyword = decrypt_keyword + chr(2*ASCIIA + 26 - ord(char))
+    return encrypt_vigenere(ciphertext, decrypt_keyword)
 
 # Merkle-Hellman Knapsack Cryptosystem
 # Arguments: integer
