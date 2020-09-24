@@ -7,9 +7,6 @@ ASCIIZ = 90
 # Caesar Cipher
 # Arguments: string, integer
 # Returns: string
-# 'A' = 65
-# 'Z' = 90
-# Ord returns the integer representing the character
 def encrypt_caesar(plaintext, offset):
     encrypted_text = ""
     for char in plaintext:
@@ -19,6 +16,7 @@ def encrypt_caesar(plaintext, offset):
             encrypted_text = encrypted_text + char
     return encrypted_text
 
+# Shifts one character char by an integer offset
 def shift_character(char, offset):
     return chr((ord(char)+offset-ASCIIA)%26 + ASCIIA)
 
@@ -33,7 +31,7 @@ def decrypt_caesar(ciphertext, offset):
 # Returns: string
 def encrypt_vigenere(plaintext, keyword):
     encrypted_string = ""
-    pos = 0
+    pos = 0 # Current position in the keyword which determines the shift
     shift = ord(keyword[pos]) - ASCIIA
     for char in plaintext:
         encrypted_string = encrypted_string + shift_character(char, shift)
@@ -44,7 +42,7 @@ def encrypt_vigenere(plaintext, keyword):
 # Arguments: string, string
 # Returns: string
 def decrypt_vigenere(ciphertext, keyword):
-    decrypt_keyword = ""
+    decrypt_keyword = "" # Word that undoes the shifts of the original keyword
     for char in keyword:
         if ord(char)==ASCIIA:
             decrypt_keyword = decrypt_keyword + char
@@ -59,17 +57,17 @@ def generate_private_key(n=8):
     seq_w = generate_superincreasing_sequence(n+1)
     q = seq_w[n]
     del seq_w[n]
-    print(q)
     r = generate_coprime_num(q)
     return (tuple(seq_w), q, r)
 
-
+# Generates a number coprime to n by randomly trying numbers in [2, n-1]
 def generate_coprime_num (n):
     x=0
     while math.gcd(n, x) != 1:
         x = random.randint(2, n-1)
     return x
 
+# Generates a random superincreasing sequence
 def generate_superincreasing_sequence (n):
     seq = [random.randint(1, 10)]
     while len(seq)<n:
@@ -116,6 +114,9 @@ def byte_to_bits (byte):
         bits.insert(0, 0)
     return bits
 
+# Recursively converts a number to binary and returns an array of 0's and 1's
+# e.g. 4 = [1, 0, 0]
+# Split off from previous method because filling out 0's messes up the recursion
 def num_to_binary (num):
     bits = []
     if num>1:
@@ -126,15 +127,46 @@ def num_to_binary (num):
 # Arguments: list of integers, private key (W, Q, R) with W a tuple
 # Returns: bytearray or str of plaintext
 def decrypt_mhkc(ciphertext, private_key):
-    pass
+    plaintext = ''
+    for char in ciphertext:
+        plaintext += chr(bits_to_byte(decrypt_char(char, private_key)))
+    return plaintext
+
+def decrypt_char (text, private_key):
+    w_i = private_key[0]
+    q = private_key[1]
+    r = private_key[2]
+    r_inverse = (r**(phi(q)-1)) % q # Computing the inverse using Euler's Theorem
+    c_prime = text*r_inverse % q
+    bits = []
+    # Greedy algorithm
+    # Note arraya is reversed because we pick larger values first
+    for w in w_i[::-1]:
+        if w<=c_prime:
+            bits.append(1)
+            c_prime = c_prime - w
+        else:
+            bits.append(0)
+    # Note bits are reversed because values for larger w_i are determined first
+    return bits[::-1]
+
+# Euler totient function
+def phi(n):
+    result = 1
+    for i in range(2,n):
+        if math.gcd(i,n) == 1:
+            result+=1
+    return result
 
 def main():
     # Testing code here
-    private = generate_private_key(8)
-    print(private)
-    public = create_public_key(private)
-    print(public)
-    print(encrypt_mhkc('ATTACKATDWAN', public))
+    private_key = generate_private_key()
+    print(private_key)
+    public_key = create_public_key(private_key)
+    print(public_key)
+    ciphertext = encrypt_mhkc('HERESASECRETMESSAGE', public_key)
+    print(ciphertext)
+    print(decrypt_mhkc(ciphertext, private_key))
 
 if __name__ == "__main__":
     main()
