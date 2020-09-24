@@ -139,15 +139,18 @@ def decrypt_char (text, private_key):
     r_inverse = (r**(phi(q)-1)) % q # Computing the inverse using Euler's Theorem
     c_prime = text*r_inverse % q
     bits = []
-    # Greedy algorithm
-    # Note arraya is reversed because we pick larger values first
-    for w in w_i[::-1]:
-        if w<=c_prime:
+    return subset_greedy(w_i, c_prime)
+
+def subset_greedy (values, goal):
+    bits = []
+    # Values are reversed because larger values must be decided before smaller ones
+    for value in values[::-1]:
+        if value<=goal:
             bits.append(1)
-            c_prime = c_prime - w
+            goal = goal - value
         else:
             bits.append(0)
-    # Note bits are reversed because values for larger w_i are determined first
+    # Note bits are reversed because decisions were made for larger values first
     return bits[::-1]
 
 # Euler totient function
