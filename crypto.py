@@ -1,3 +1,6 @@
+import math
+import random
+
 ASCIIA = 65
 ASCIIZ = 90
 
@@ -53,17 +56,72 @@ def decrypt_vigenere(ciphertext, keyword):
 # Arguments: integer
 # Returns: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
 def generate_private_key(n=8):
-    pass
+    seq_w = generate_superincreasing_sequence(n+1)
+    q = seq_w[n]
+    del seq_w[n]
+    print(q)
+    r = generate_coprime_num(q)
+    return (tuple(seq_w), q, r)
+
+
+def generate_coprime_num (n):
+    x=0
+    while math.gcd(n, x) != 1:
+        x = random.randint(2, n-1)
+    return x
+
+def generate_superincreasing_sequence (n):
+    seq = [random.randint(1, 10)]
+    while len(seq)<n:
+        seq.append(random.randint(sum(seq)+1, 2*sum(seq)))
+    return seq
+
 
 # Arguments: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
 # Returns: tuple B - a length-n tuple of integers
 def create_public_key(private_key):
-    pass
+    b = []
+    w = private_key[0]
+    q = private_key[1]
+    r = private_key[2]
+    for w in private_key[0]:
+        b.append((r*w) % q)
+    return tuple(b)
 
-# Arguments: string, tuple (W, Q, R)
+# Arguments: string, tuple B
 # Returns: list of integers
 def encrypt_mhkc(plaintext, public_key):
-    pass
+    c = []
+    for char in plaintext:
+        bits = byte_to_bits(ord(char))
+        total = 0
+        index = 0
+        for bit in bits:
+            total = total + bit*public_key[index]
+            index = index + 1
+        c.append(total)
+    return c
+
+# Takes in an array of bits; returns a byte
+def bits_to_byte (bits):
+    total = 0
+    for bit in bits:
+        total = bit + 2*total
+    return total
+
+# Takes in a byte; returns an array of bits
+def byte_to_bits (byte):
+    bits = num_to_binary(byte)
+    while len(bits)<8:
+        bits.insert(0, 0)
+    return bits
+
+def num_to_binary (num):
+    bits = []
+    if num>1:
+        bits = num_to_binary(num//2)
+    bits.append(num%2)
+    return bits
 
 # Arguments: list of integers, private key (W, Q, R) with W a tuple
 # Returns: bytearray or str of plaintext
@@ -72,7 +130,11 @@ def decrypt_mhkc(ciphertext, private_key):
 
 def main():
     # Testing code here
-    print(decrypt_vigenere('BLAHBLAHBLDFSD', 'AAAAA'))
+    private = generate_private_key(8)
+    print(private)
+    public = create_public_key(private)
+    print(public)
+    print(encrypt_mhkc('ATTACKATDWAN', public))
 
 if __name__ == "__main__":
     main()
