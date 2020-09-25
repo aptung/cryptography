@@ -163,18 +163,7 @@ def phi(n):
 
 def main():
     # Testing code here
-    public_key = create_public_key(((6, 8, 28, 47, 141, 369, 991, 2809, 4973), 14850, 7))
-    print(public_key)
-    print(encrypt_mhkc("KONASWASNOTTHEIMPOSTOR", public_key))
-
-
-    '''private_key = generate_private_key()
-    print(private_key)
-    public_key = create_public_key(private_key)
-    print(public_key)
-    ciphertext = encrypt_mhkc('HERESASECRETMESSAGE', public_key)
-    print(ciphertext)
-    print(decrypt_mhkc(ciphertext, private_key))'''
+    pass
 
 if __name__ == "__main__":
     main()
