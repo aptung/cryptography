@@ -10,7 +10,7 @@ ASCIIZ = 90
 def encrypt_caesar(plaintext, offset):
     encrypted_text = ""
     for char in plaintext:
-        if (ASCIIA<=ord(char)<=ASSCIIZ):
+        if (ASCIIA<=ord(char)<=ASCIIZ):
             encrypted_text = encrypted_text + shift_character(char, offset)
         else:
             encrypted_text = encrypted_text + char
@@ -86,7 +86,7 @@ def create_public_key(private_key):
         b.append((r*w) % q)
     return tuple(b)
 
-# Arguments: string, tuple B
+# Arguments: string, tuple (B)
 # Returns: list of integers
 def encrypt_mhkc(plaintext, public_key):
     c = []
@@ -163,13 +163,18 @@ def phi(n):
 
 def main():
     # Testing code here
-    private_key = generate_private_key()
+    public_key = create_public_key(((6, 8, 28, 47, 141, 369, 991, 2809, 4973), 14850, 7))
+    print(public_key)
+    print(encrypt_mhkc("KONASWASNOTTHEIMPOSTOR", public_key))
+
+
+    '''private_key = generate_private_key()
     print(private_key)
     public_key = create_public_key(private_key)
     print(public_key)
     ciphertext = encrypt_mhkc('HERESASECRETMESSAGE', public_key)
     print(ciphertext)
-    print(decrypt_mhkc(ciphertext, private_key))
+    print(decrypt_mhkc(ciphertext, private_key))'''
 
 if __name__ == "__main__":
     main()
